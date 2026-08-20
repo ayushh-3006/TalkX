@@ -9,6 +9,10 @@ import connectDB from "./src/config/db.js";
 import AuthRouter from "./src/routers/authRouter.js";
 import UserRouter from "./src/routers/userRouter.js";
 
+import http from "http";
+import { Server } from "socket.io";
+import  WebSocket  from "./src/config/webSocket.js";
+
 const app = express();
 
 // Middlewares
@@ -41,6 +45,18 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
+const httpserver = http.createServer(Server);
+
+const io = new Server(httpserver, {
+  cors: {
+    origin: ["http://localhost:5173"],
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+});
+
+WebSocket(io);
 
 app.listen(PORT, async () => {
   await connectDB();
